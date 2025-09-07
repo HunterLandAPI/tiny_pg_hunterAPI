@@ -1,0 +1,8 @@
+name: MyPlugin
+version: ${project.version}
+main: io.github.louis5103.tiny_pg_hunterAPI.Tiny_pg_hunterAPI
+api-version: '1.20'
+commands:
+  hello:
+    description: "Sends a hello message from Spring."
+    usage: "/<command>"
