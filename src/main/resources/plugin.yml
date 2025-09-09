@@ -1,8 +1,41 @@
-name: MyPlugin
-version: ${project.version}
+name: Tiny_PG_HunterAPI
+version: 1.0-SNAPSHOT
+author: louis5103
+description: "마인크래프트 플러그인에서 데이터베이스를 활용한 플레이어 데이터 관리 시스템"
+website: "https://github.com/louis5103/tiny_pg_hunterAPI"
 main: io.github.louis5103.tiny_pg_hunterAPI.Tiny_pg_hunterAPI
 api-version: '1.20'
+load: STARTUP
+prefix: "[TinyPG]"
+
 commands:
   hello:
-    description: "Sends a hello message from Spring."
+    description: "플러그인의 정상 작동을 확인하는 테스트 명령어입니다."
     usage: "/<command>"
+    permission: tinypg.command.hello
+    permission-message: "§c이 명령어를 사용할 권한이 없습니다!"
+    aliases: ["hi", "안녕"]
+
+permissions:
+  tinypg.user:
+    description: "기본 사용자 권한"
+    default: true
+    children:
+      tinypg.command.hello: true
+  
+  tinypg.command.hello:
+    description: "/hello 명령어 사용 권한"
+    default: true
+  
+  tinypg.vip:
+    description: "VIP 사용자 권한"
+    default: false
+    children:
+      tinypg.user: true
+  
+  tinypg.admin:
+    description: "관리자 권한 (모든 기능 접근 가능)"
+    default: op
+    children:
+      tinypg.vip: true
+      tinypg.user: true
