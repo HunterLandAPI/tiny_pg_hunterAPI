@@ -265,3 +265,64 @@ credentials.*
 
 # Custom git ignore pattern
 *.properties
+
+# =====================================================
+# Minecraft Plugin Development 관련
+# =====================================================
+
+# Gradle runServer 생성 파일들
+run/
+
+# 테스트 서버 디렉토리
+test-server/
+
+# 마인크래프트 서버 파일들
+*.jar.cache
+server.properties
+eula.txt
+world/
+world_nether/
+world_the_end/
+logs/
+crash-reports/
+libraries/
+versions/
+cache/
+
+# 플러그인 개발 임시 파일들
+*.jar.tmp
+*.backup
+*.old
+
+# 데이터베이스 관련 (민감 정보)
+database.properties
+hibernate.cfg.xml
+db-config.yml
+
+# 서버 설정 파일들 (로컬 전용)
+banned-ips.json
+banned-players.json
+ops.json
+whitelist.json
+usercache.json
+usernamecache.json
+
+# Paper/Spigot 서버 파일들
+paper.yml
+spigot.yml
+bukkit.yml
+commands.yml
+help.yml
+permissions.yml
+
+# 플러그인 데이터 디렉토리
+plugins/*/
+!plugins/.gitkeep
+
+# 빌드 스크립트 생성 파일들 (임시 파일만 제외)
+start-server.sh
+
+# 유용한 스크립트들은 git에 포함:
+# setup-test-server.sh    - 테스트 서버 설정
+# fix-gradle-completion.sh - Gradle 자동완성 문제 해결
+# gradle-aliases.sh        - Gradle 별칭 모음
