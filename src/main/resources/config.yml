@@ -1,0 +1,45 @@
+# ============================================
+# Tiny PG Hunter API - Database Configuration  
+# ============================================
+
+database:
+  type: "sqlite"  # "mysql" 또는 "sqlite"
+  
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "minecraft_db"
+    username: "root"
+    password: "password"
+  
+  sqlite:
+    file: "database/player_data.db"
+
+# Hibernate 설정 - 개발 중 자유롭게 조정 가능
+hibernate:
+  # 스키마 관리
+  hbm2ddl:
+    auto: "update"  # create, create-drop, update, validate, none
+  
+  # SQL 로깅 (개발 중 유용)
+  show_sql: true
+  format_sql: true
+  use_sql_comments: true
+  
+  # 네이밍 전략
+  physical_naming_strategy: "org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy"
+  
+  # 커넥션 풀 설정 (개발 중 조정 가능)
+  connection:
+    provider_class: "org.hibernate.hikaricp.internal.HikariCPConnectionProvider"
+  
+  hikari:
+    minimumIdle: 2
+    maximumPoolSize: 10
+    connectionTimeout: 5000
+    maxLifetime: 1800000
+
+# 플러그인 설정
+plugin:
+  prefix: "&7[&6TinyPGHunter&7]&r"
+  debug: true  # 개발 모드
