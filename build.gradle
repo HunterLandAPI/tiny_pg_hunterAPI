@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradleup.shadow' version '8.3.5'
     id 'xyz.jpenilla.run-paper' version '2.3.1'
 }
 
-group = 'io.github.louis5103' // 본인 패키지 이름으로 변경
+group = 'io.github.louis5103'
 version = '1.0-SNAPSHOT'
 
 repositories {
@@ -12,39 +12,96 @@ repositories {
     maven { url = 'https://repo.papermc.io/repository/maven-public/' }
 }
 
-dependencies {
-    // Spring Boot 버전 관리 (BOM)
-    implementation platform('org.springframework.boot:spring-boot-dependencies:2.7.18')
-
-    // Paper API
-    compileOnly 'io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT'
-
-    // Spring 통합 라이브러리 (안정적인 spring-spigot 사용)
-    implementation 'be.lennertsoffers:spring-spigot:1.0.1'
-    annotationProcessor 'be.lennertsoffers:spring-spigot:1.0.1'
-
-    // Spring Data JPA (DB 연동 시)
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
-    // Lombok (편의 기능)
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-}
-
 java {
-    // 사용하는 마인크래프트 버전에 맞는 Java 버전 지정 (1.20.6 -> Java 21)
     toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
 
-// 테스트 서버 설정
-tasks.runServer {
-    minecraftVersion("1.20.6")
+dependencies {
+    // === BOM 의존성들 (버전 관리) ===
+    
+    // Hibernate BOM - Java 21 최적화 버전
+    implementation platform('org.hibernate.orm:hibernate-platform:6.6.1.Final')
+    
+    // Jackson BOM - Java 21 최적화 버전
+    implementation platform('com.fasterxml.jackson:jackson-bom:2.18.1')
+    
+    // SLF4J BOM - 최신 안정 버전
+    implementation platform('org.slf4j:slf4j-bom:2.0.16')
+    
+    // Jakarta Platform BOM - Jakarta EE 관련 버전 통일
+    implementation platform('jakarta.platform:jakarta.jakartaee-bom:10.0.0')
+
+    // === Paper API (compileOnly) ===
+    compileOnly 'io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT'
+
+    // === 핵심 의존성들 (BOM으로 버전 관리됨) ===
+    
+    // Hibernate - BOM으로 버전 자동 관리
+    implementation 'org.hibernate.orm:hibernate-core'
+    implementation 'org.hibernate.orm:hibernate-hikaricp'
+    
+    // HikariCP - 별도 버전 명시 (Hibernate BOM에 포함되지 않음)
+    implementation 'com.zaxxer:HikariCP:5.1.0'
+    
+    // MySQL Connector - 별도 버전 명시
+    implementation 'com.mysql:mysql-connector-j:8.4.0'
+    
+    // 로깅 - SLF4J BOM으로 버전 자동 관리
+    implementation 'org.slf4j:slf4j-api'
+    implementation 'org.slf4j:slf4j-simple'
+
+    // === 개발 도구 ===
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
 }
 
-// 다른 플러그인과 충돌 방지 설정 (필수)
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 shadowJar {
-    relocate 'org.springframework', 'io.github.louis5103.tiny_pg_hunterAPI.libs.spring'
-    relocate 'org.hibernate', 'io.github.louis5103.tiny_pg_hunterAPI.libs.hibernate'
-    // ... 다른 라이브러리들도 필요에 따라 추가
-    relocate 'org.projectlombok', 'io.github.louis5103.tiny_pg_hunterAPI.libs.projectlombok'
+    archiveBaseName.set(project.name)
+    archiveClassifier.set('')
+    
+    // 중복 파일 처리
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    
+    // 패키지 충돌 방지를 위한 relocate
+    relocate 'org.hibernate', 'io.github.louis5103.libs.hibernate'
+    relocate 'com.zaxxer.hikari', 'io.github.louis5103.libs.hikaricp'
+    relocate 'com.mysql', 'io.github.louis5103.libs.mysql'
+    relocate 'org.slf4j', 'io.github.louis5103.libs.slf4j'
+    relocate 'jakarta.persistence', 'io.github.louis5103.libs.jakarta.persistence'
+    relocate 'antlr', 'io.github.louis5103.libs.antlr'
+    relocate 'com.fasterxml.jackson', 'io.github.louis5103.libs.jackson'
+    relocate 'net.bytebuddy', 'io.github.louis5103.libs.bytebuddy'
+    relocate 'org.jboss', 'io.github.louis5103.libs.jboss'
+    relocate 'org.dom4j', 'io.github.louis5103.libs.dom4j'
+}
+
+// 빌드 순서 보장
+build {
+    dependsOn shadowJar
+}
+
+// plugin.yml 처리
+processResources {
+    filesMatching('plugin.yml') {
+        expand(project.properties)
+    }
+}
+
+// 개발 환경 - 터미널 모드 개선
+runServer {
+    minecraftVersion('1.20.6')
+    
+    // 터미널 입력 개선 설정
+    systemProperty 'terminal.jline', 'true'
+    systemProperty 'terminal.ansi', 'true'
+    
+    // JVM 옵션 추가
+    jvmArgs = [
+        '-Djline.terminal=auto',
+        '-Djansi.passthrough=true'
+    ]
 }
