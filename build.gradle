@@ -43,8 +43,9 @@ dependencies {
     // HikariCP - 별도 버전 명시 (Hibernate BOM에 포함되지 않음)
     implementation 'com.zaxxer:HikariCP:5.1.0'
     
-    // MySQL Connector - 별도 버전 명시
-    implementation 'com.mysql:mysql-connector-j:8.4.0'
+    // Database Drivers
+    implementation 'com.mysql:mysql-connector-j:8.4.0'  // MySQL
+    implementation 'org.xerial:sqlite-jdbc:3.46.1.3'    // SQLite
     
     // 로깅 - SLF4J BOM으로 버전 자동 관리
     implementation 'org.slf4j:slf4j-api'

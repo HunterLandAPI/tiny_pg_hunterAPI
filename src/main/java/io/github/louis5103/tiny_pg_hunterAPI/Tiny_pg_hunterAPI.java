@@ -47,23 +47,28 @@ public class Tiny_pg_hunterAPI extends JavaPlugin {
             instance = this;
             getLogger().info("=== Tiny PG Hunter API 플러그인 시작 ===");
             
-            // 2. 데이터베이스 초기화
+            // 2. 설정 파일 로드
+            getLogger().info("설정 파일을 로드합니다...");
+            saveDefaultConfig();  // config.yml이 없으면 기본 설정 파일 생성
+            reloadConfig();        // 설정 파일 다시 로드
+            
+            // 3. 데이터베이스 초기화
             getLogger().info("데이터베이스 연결을 초기화합니다...");
             this.databaseManager = new DatabaseManager(this);
             
-            // 3. 레포지토리 초기화 (데이터베이스 매니저가 필요)
+            // 4. 레포지토리 초기화 (데이터베이스 매니저가 필요)
             getLogger().info("데이터 접근 계층을 초기화합니다...");
             this.playerRepository = new PlayerDataRepository(databaseManager);
             
-            // 4. 서비스 계층 초기화
+            // 5. 서비스 계층 초기화
             getLogger().info("서비스 계층을 초기화합니다...");
             this.messageService = new MessageService();
             
-            // 5. 명령어 등록
+            // 6. 명령어 등록
             getLogger().info("명령어를 등록합니다...");
             registerCommands();
             
-            // 6. 이벤트 리스너 등록
+            // 7. 이벤트 리스너 등록
             getLogger().info("이벤트 리스너를 등록합니다...");
             registerListeners();
             
