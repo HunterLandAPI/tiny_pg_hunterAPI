@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'xyz.jpenilla.run-paper' version '2.3.1'
+}
+
+group = 'io.github.louis5103' // 본인 패키지 이름으로 변경
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+}
+
+dependencies {
+    // Spring Boot 버전 관리 (BOM)
+    implementation platform('org.springframework.boot:spring-boot-dependencies:2.7.18')
+
+    // Paper API
+    compileOnly 'io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT'
+
+    // Spring 통합 라이브러리 (안정적인 spring-spigot 사용)
+    implementation 'be.lennertsoffers:spring-spigot:1.0.1'
+    annotationProcessor 'be.lennertsoffers:spring-spigot:1.0.1'
+
+    // Spring Data JPA (DB 연동 시)
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Lombok (편의 기능)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+}
+
+java {
+    // 사용하는 마인크래프트 버전에 맞는 Java 버전 지정 (1.20.6 -> Java 21)
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+// 테스트 서버 설정
+tasks.runServer {
+    minecraftVersion("1.20.6")
+}
+
+// 다른 플러그인과 충돌 방지 설정 (필수)
+shadowJar {
+    relocate 'org.springframework', 'io.github.louis5103.tiny_pg_hunterAPI.libs.spring'
+    relocate 'org.hibernate', 'io.github.louis5103.tiny_pg_hunterAPI.libs.hibernate'
+    // ... 다른 라이브러리들도 필요에 따라 추가
+    relocate 'org.projectlombok', 'io.github.louis5103.tiny_pg_hunterAPI.libs.projectlombok'
+}
